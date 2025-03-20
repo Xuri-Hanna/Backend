@@ -8,6 +8,7 @@ use App\Http\Controllers\api\HostingController;
 use App\Http\Controllers\api\HostingAccountController;
 use App\Http\Controllers\api\VpsAccountController;
 use App\Http\Controllers\api\DomainAccountController;
+use App\Http\Controllers\api\DiscountController;
 use App\Models\HostingAccount;
 
 Route::get('/user', function (Request $request) {
@@ -27,3 +28,5 @@ Route::apiResource('hosting_accounts',HostingAccountController::class);
 Route::apiResource('domain_accounts',DomainAccountController::class);
 Route::apiResource('vps_accounts',VpsAccountController::class);
 
+//MANAGER
+Route::apiResource('discounts', DiscountController::class);
