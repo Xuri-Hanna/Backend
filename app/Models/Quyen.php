@@ -9,8 +9,7 @@ class Quyen extends Model
     use HasFactory;
 
     protected $table = 'quyen';
-
-    protected $fillable = ['ma_quyen', 'ten_quyen'];
-
+    protected $primaryKey = 'ma_quyen';
+    public $timestamps = false;
+    protected $fillable = ['ten_quyen'];
 }
-

@@ -18,7 +18,7 @@ class DomainController extends Controller
     }
     public function getDomainProducts()
     {
-        return response()->json(DomainProduct::select('id', 'domain_name')->get(), 200);
+        return response()->json(DomainProduct::select('id', 'domain_name', 'price')->get(), 200);
     }
     /**
      * Thêm mới một domain.

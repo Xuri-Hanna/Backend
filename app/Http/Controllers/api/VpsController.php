@@ -18,7 +18,7 @@ class VPSController extends Controller
     }
     public function getVpsProducts()
     {
-        return response()->json(VPSProduct::select('id', 'plan')->get(), 200);
+        return response()->json(VPSProduct::select('id', 'plan' ,'price')->get(), 200);
     }
 
     /**

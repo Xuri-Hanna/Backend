@@ -22,7 +22,7 @@ class HostingController extends Controller
      */
     public function getHostingProducts()
     {
-        return response()->json(HostingProduct::select('id', 'plan')->get(), 200);
+        return response()->json(HostingProduct::select('id', 'plan', 'price')->get(), 200);
     }
 
 

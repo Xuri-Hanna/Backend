@@ -20,12 +20,16 @@ class KhachHangController extends Controller
     /**
      * Thêm mới một khách hàng.
      */
+    public function checkCustomer(Request $request) {
+        $exists = KhachHang::where('email', $request->email)->exists();
+        return response()->json(['exists' => $exists]);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:khach_hangs,email',
-            'password' => 'required|string|min:6',
+            'email'    => 'required|email|unique:khach_hang,email',
             'dia_chi'  => 'nullable|string|max:255',
             'sdt'      => 'nullable|string|max:20',
         ]);
@@ -36,8 +40,6 @@ class KhachHangController extends Controller
 
         // Mã hóa mật khẩu trước khi lưu
         $data = $request->all();
-        $data['password'] = Hash::make($request->password);
-
         $khachHang = KhachHang::create($data);
 
         return response()->json([
@@ -73,8 +75,7 @@ class KhachHangController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name'     => 'sometimes|string|max:255',
-            'email'    => 'sometimes|email|unique:khach_hangs,email,' . $id,
-            'password' => 'sometimes|string|min:6',
+            'email'    => 'sometimes|email|unique:khach_hang,email,' . $id,
             'dia_chi'  => 'sometimes|string|max:255',
             'sdt'      => 'sometimes|string|max:20',
         ]);
@@ -83,12 +84,7 @@ class KhachHangController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        // Mã hóa mật khẩu nếu có thay đổi
         $data = $request->all();
-        if ($request->has('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
         $khachHang->update($data);
 
         return response()->json([

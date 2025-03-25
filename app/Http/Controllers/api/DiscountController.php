@@ -13,12 +13,36 @@ class DiscountController extends Controller
     {
         return response()->json(Discount::all(), 200);
     }
+    public function findById($id)
+    {
+        $discount = Discount::find($id);
+
+        if (!$discount) {
+            return response()->json(['message' => 'Không tìm thấy mã giảm giá'], 404);
+        }
+
+        return response()->json([
+            'id' => $discount->id,
+            'percentage' => $discount->percentage
+        ], 200);
+    }
+    public function show($id)
+    {
+        $discount = Discount::find($id);
+
+        if (!$discount) {
+            return response()->json(['message' => 'Mã giảm giá không hợp lệ'], 404);
+        }
+
+        return response()->json($discount);
+    }
+
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'percentage'  => 'required|numeric|min:1|max:100',
-            'expiry_date' => 'required|date|after:today',
+            'expiry_date' => 'required|date|',
             'discount_type' => 'required|in:manual,vip'
         ]);
 
@@ -26,11 +50,10 @@ class DiscountController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        // Tự động tạo mã giảm giá
-        $code = Discount::generateCode($request->discount_type);
+        $id = Discount::generateId($request->discount_type); // Tạo id tự động theo loại
 
         $discount = Discount::create([
-            'code' => $code,
+            'id' => $id,
             'percentage' => $request->percentage,
             'expiry_date' => $request->expiry_date,
             'discount_type' => $request->discount_type
@@ -42,6 +65,7 @@ class DiscountController extends Controller
         ], 201);
     }
 
+
     public function update(Request $request, string $id)
     {
         $discount = Discount::find($id);
@@ -52,7 +76,7 @@ class DiscountController extends Controller
 
         $validator = Validator::make($request->all(), [
             'percentage'  => 'sometimes|numeric|min:1|max:100',
-            'expiry_date' => 'sometimes|date|after:today',
+            'expiry_date' => 'sometimes|date|',
             'discount_type' => 'sometimes|in:thường niên,khách vip'
         ]);
 
@@ -80,4 +104,5 @@ class DiscountController extends Controller
 
         return response()->json(['message' => 'Xóa mã giảm giá thành công'], 200);
     }
+
 }
