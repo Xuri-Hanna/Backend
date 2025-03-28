@@ -9,6 +9,7 @@ use App\Http\Controllers\api\HostingAccountController;
 use App\Http\Controllers\api\VpsAccountController;
 use App\Http\Controllers\api\DomainAccountController;
 use App\Http\Controllers\api\DiscountController;
+use App\Http\Controllers\api\InvoiceController;
 use App\Http\Controllers\api\KhachHangController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\TaiKhoanController;
@@ -46,4 +47,9 @@ Route::apiResource('tai_khoans',TaiKhoanController::class);
 Route::apiResource('quyens',QuyenController::class);
 Route::apiResource('phan_quyens',PhanQuyenController::class);
 
+//send mail
+Route::apiResource('invoices', InvoiceController::class);
 
+
+
+Route::post('/invoices/{id}/send-email', [InvoiceController::class, 'sendEmail']);

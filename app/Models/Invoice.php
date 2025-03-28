@@ -9,13 +9,21 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_id', 'user_id', 'amount', 'status', 'payment_method', 'issued_at', 'due_date'];
+    protected $fillable = ['order_id', 'user_id', 'amount', 'status', 'issued_at', 'due_date'];
+    protected $attributes =[
+        'payment_method' => 'QR PAY',
+        'status' => 'unpaid',
+    ];
+    protected $casts = [
+        'issued_at' => 'date',
+        'due_date' => 'date',
+    ];
 
     public function order() {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class,);
     }
 
     public function user() {
-        return $this->belongsTo(KhachHang::class);
+        return $this->belongsTo(KhachHang::class,);
     }
 }

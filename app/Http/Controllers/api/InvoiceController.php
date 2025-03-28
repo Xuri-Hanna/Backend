@@ -5,6 +5,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\InvoiceMail;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Order;
+use App\Models\KhachHang;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 
 class InvoiceController extends Controller
 {
@@ -23,10 +30,10 @@ class InvoiceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id'       => 'required|exists:orders,id',
-            'user_id'        => 'required|exists:khach_hangs,id',
+            'user_id'        => 'required|exists:khach_hang,id',
             'amount'         => 'required|numeric|min:0',
-            'status'         => 'required|in:pending,paid,cancelled',
-            'payment_method' => 'required|string|max:255',
+            'status'         => 'required||in:paid,unpaid,overdue',
+            'payment_method' => 'nullable|string|max:255',
             'issued_at'      => 'required|date',
             'due_date'       => 'required|date|after_or_equal:issued_at',
         ]);
@@ -70,10 +77,10 @@ class InvoiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'order_id'       => 'sometimes|exists:orders,id',
-            'user_id'        => 'sometimes|exists:khach_hangs,id',
+            'user_id'        => 'sometimes|exists:khach_hang,id',
             'amount'         => 'sometimes|numeric|min:0',
-            'status'         => 'sometimes|in:pending,paid,cancelled',
-            'payment_method' => 'sometimes|string|max:255',
+            'status'         => 'sometimes|in:paid,unpaid,overdue',
+            'payment_method' => 'sometimes|max:255',
             'issued_at'      => 'sometimes|date',
             'due_date'       => 'sometimes|date|after_or_equal:issued_at',
         ]);
@@ -104,5 +111,21 @@ class InvoiceController extends Controller
         $invoice->delete();
 
         return response()->json(['message' => 'Xóa hóa đơn thành công'], 200);
+    }
+
+    public function sendEmail($invoiceId)
+    {
+        $invoice = Invoice::findOrFail($invoiceId);
+        $customer = KhachHang::findOrFail($invoice->user_id);
+
+        // Tạo file PDF
+        $pdf = PDF::loadView('pdf.invoice', compact('invoice', 'customer'));
+        $pdfPath = storage_path("app/public/invoices/invoice_{$invoice->id}.pdf");
+        $pdf->save($pdfPath);
+
+        // Gửi email
+        Mail::to($customer->email)->send(new InvoiceMail($invoice, $pdfPath));
+
+        return response()->json(['message' => 'Hóa đơn đã được gửi qua email!']);
     }
 }

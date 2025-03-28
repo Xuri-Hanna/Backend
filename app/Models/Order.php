@@ -21,5 +21,9 @@ class Order extends Model
     public function discount() {
         return $this->belongsTo(Discount::class);
     }
+    public function hostingAccount()
+    {
+        return $this->hasOne(HostingAccount::class, 'hosting_id', 'service_id')->inRandomOrder();
+    }
 }
 
