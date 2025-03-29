@@ -37,7 +37,7 @@ Route::apiResource('vps_accounts',VpsAccountController::class);
 
 //MANAGER
 Route::apiResource('discounts', DiscountController::class);
-Route::get('/discounts/{id}', [DiscountController::class, 'show']);
+Route::get('/discounts/{id}', [DiscountController::class, 'findById']);
 Route::apiResource('orders', OrderController::class);
 Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 Route::apiResource('customers', KhachHangController::class);
@@ -52,4 +52,4 @@ Route::apiResource('invoices', InvoiceController::class);
 
 
 
-Route::post('/invoices/{id}/send-email', [InvoiceController::class, 'sendEmail']);
+Route::post('/send_email/{id}', [InvoiceController::class, 'sendEmail']);

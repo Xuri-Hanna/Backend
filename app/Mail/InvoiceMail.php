@@ -24,7 +24,7 @@ class InvoiceMail extends Mailable
     {
         return $this->from(env('MAIL_FROM_ADDRESS'))
                     ->subject('Hóa đơn của bạn')
-                    ->markdown('emails.invoice')
+                    ->view('emails.invoice')
                     ->attach($this->pdfPath, [
                         'as' => "invoice_{$this->invoice->id}.pdf",
                         'mime' => 'application/pdf',

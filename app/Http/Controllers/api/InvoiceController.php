@@ -9,7 +9,8 @@ use App\Mail\InvoiceMail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
 use App\Models\KhachHang;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
+use \PDF;
 
 
 
@@ -113,17 +114,20 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Xóa hóa đơn thành công'], 200);
     }
 
-    public function sendEmail($invoiceId)
+    public function sendEmail($id)
     {
-        $invoice = Invoice::findOrFail($invoiceId);
+        $invoice = Invoice::findOrFail($id);
         $customer = KhachHang::findOrFail($invoice->user_id);
 
-        // Tạo file PDF
         $pdf = PDF::loadView('pdf.invoice', compact('invoice', 'customer'));
         $pdfPath = storage_path("app/public/invoices/invoice_{$invoice->id}.pdf");
-        $pdf->save($pdfPath);
 
-        // Gửi email
+        if (!file_exists($pdfPath)) {
+            $pdf->save($pdfPath);
+        } else {
+            return response()->json(['message' => 'File already exists.'], 200);
+        }
+        // // Gửi email
         Mail::to($customer->email)->send(new InvoiceMail($invoice, $pdfPath));
 
         return response()->json(['message' => 'Hóa đơn đã được gửi qua email!']);

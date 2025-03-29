@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('khach_hang');
             $table->decimal('amount', 10, 2);
             $table->enum('status', ['unpaid', 'paid', 'overdue']);
             $table->string('payment_method', 50);

@@ -30,8 +30,8 @@ class OrderController extends Controller
         'dia_chi' => 'required|string',
         'service_id' => 'required|integer',
         'service_type' => 'required|string',
-        'total_price' => 'required|numeric',
-        'status' => 'required|string',
+        'total_price' => 'numeric',
+        'status' => 'string',
         'duration_months' => 'required|integer',
         'discount_code' => 'nullable|string',
     ]);
@@ -46,8 +46,8 @@ class OrderController extends Controller
         'dia_chi' => $validatedData['dia_chi'],
         'service_id' => $validatedData['service_id'],
         'service_type' => $validatedData['service_type'],
-        'total_price' => $validatedData['total_price'],
-        'status' => $validatedData['status'],
+        'total_price' => $validatedData['total_price'] ?? 0,
+        'status' => $validatedData['status'] ?? 'pending',
         'duration_months' => $validatedData['duration_months'],
         'discount_id' => $discount ? $discount->id : null, // Nếu không có, đặt null
     ]);
